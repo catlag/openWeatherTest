@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">OpenWeather</string>
+    <string name="user_input_hint">search by place</string>
+</resources>
