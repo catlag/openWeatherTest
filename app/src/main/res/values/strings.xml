@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">OpenWeather</string>
-    <string name="user_input_hint">search by place</string>
+    <string name="user_input_hint">Show weather in…</string>
+    <string name="button_search">Search</string>
+    <string name="main_weather_temp">Temperature:</string>
+    <string name="main_weather_feels_like">Feels Like:</string>
+    <string name="main_weather_temp_min">Temperature Minimum:</string>
+    <string name="main_weather_temp_max">Temperature Maximum:</string>
+    <string name="main_weather_humidity">Humidity:</string>
+
 </resources>

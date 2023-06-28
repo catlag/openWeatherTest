@@ -7,5 +7,6 @@ data class PlaceGeolocation(
     val lon: Double,
     val lat: Double,
     val country: String,
-    val state: String,
+    val state: String? = null,
+    val fullLocation: String,
 )

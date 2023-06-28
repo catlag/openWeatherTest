@@ -1,5 +1,6 @@
 package com.example.openweather
 
+import com.example.openweather.data.NetworkCompleteWeather
 import com.example.openweather.data.NetworkPlaceGeolocation
 import io.reactivex.Single
 import retrofit2.Response
@@ -11,8 +12,17 @@ interface Api {
     @GET("/data/2.5/weather")
     fun getWeatherByPlace(
         @Query("q") city: String,
+        @Query("units") units: String,
         @Query("appId") apiKey: String,
-    ): Single<Response<Any>>
+    ): Single<NetworkCompleteWeather>
+
+    @GET("/data/2.5/weather")
+    fun getWeatherByCoordinates(
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
+        @Query("units") units: String,
+        @Query("appId") apiKey: String,
+    ): Single<NetworkCompleteWeather>
 
     @GET("/geo/1.0/direct")
     fun getGeoCoordinates(
@@ -21,6 +31,4 @@ interface Api {
         @Query("appId") apiKey: String,
     ): Single<List<NetworkPlaceGeolocation>>
 
-    @GET("/weather-conditions")
-    fun getIcons(): Single<Any>
 }

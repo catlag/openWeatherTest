@@ -8,7 +8,7 @@ data class NetworkPlaceGeolocation (
     val lon: Double,
     val lat: Double,
     val country: String,
-    val state: String,
+    val state: String? = "",
 ){
     fun toDomain() = PlaceGeolocation(
         name = name,
@@ -16,7 +16,11 @@ data class NetworkPlaceGeolocation (
         lat = lat,
         country = country,
         state = state,
+        fullLocation = getFullLocation()
     )
+    private fun getFullLocation(): String {
+        return "$name $state $country"
+    }
 }
 
 fun List<NetworkPlaceGeolocation>.toDomain(): ArrayList<PlaceGeolocation> {

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="completeWeather"
+            type="com.example.openweather.domain.CompleteWeather" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textViewName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:fontFamily="sans-serif-light"
+            android:text="@{completeWeather.name}"
+            android:textColor="@color/white"
+            android:textSize="34sp"
+            app:layout_constraintBottom_toTopOf="@id/weatherRecycler"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="San Francisco"/>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/weatherRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:elevation="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewName"
+            tools:listitem="@layout/item_complete_weather" />
+
+        <TextView
+            android:id="@+id/textViewTemp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/main_weather_temp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/weatherRecycler" />
+
+        <TextView
+            android:id="@+id/textViewTempValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-light"
+            android:text="@{completeWeather.mainWeather.temp}"
+            app:layout_constraintStart_toEndOf="@id/textViewTemp"
+            app:layout_constraintTop_toBottomOf="@+id/weatherRecycler"
+            tools:text="78" />
+
+        <TextView
+            android:id="@+id/textViewFeelsLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/main_weather_feels_like"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTemp" />
+
+        <TextView
+            android:id="@+id/textViewFeelsLikeValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-light"
+            android:text="@{completeWeather.mainWeather.feelsLike}"
+            app:layout_constraintStart_toEndOf="@id/textViewFeelsLike"
+            app:layout_constraintTop_toBottomOf="@+id/textViewTempValue"
+            tools:text="78" />
+
+        <TextView
+            android:id="@+id/textViewMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/main_weather_temp_max"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewFeelsLike" />
+
+        <TextView
+            android:id="@+id/textViewMaxValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-light"
+            android:text="@{completeWeather.mainWeather.tempMax}"
+            app:layout_constraintStart_toEndOf="@id/textViewMax"
+            app:layout_constraintTop_toBottomOf="@+id/textViewFeelsLikeValue"
+            tools:text="78" />
+
+        <TextView
+            android:id="@+id/textViewMin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/main_weather_temp_min"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewMax" />
+
+        <TextView
+            android:id="@+id/textViewMinValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-light"
+            android:text="@{completeWeather.mainWeather.tempMin}"
+            app:layout_constraintStart_toEndOf="@id/textViewMin"
+            app:layout_constraintTop_toBottomOf="@+id/textViewMaxValue"
+            tools:text="78" />
+
+        <TextView
+            android:id="@+id/textViewHumidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/main_weather_humidity"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewMin" />
+
+        <TextView
+            android:id="@+id/textViewHumidityValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-light"
+            android:text="@{completeWeather.mainWeather.humidity}"
+            app:layout_constraintStart_toEndOf="@id/textViewHumidity"
+            app:layout_constraintTop_toBottomOf="@+id/textViewMinValue"
+            tools:text="78" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

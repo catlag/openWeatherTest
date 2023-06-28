@@ -8,7 +8,17 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.openweather.ui.main.MainFragment"
-        android:label="Main Fragment"
-        tools:layout="@layout/fragment_main"/>
+        android:label="Search Weather"
+        tools:layout="@layout/fragment_main">
+        <action
+            app:destination="@+id/resultsFragment"
+            android:id="@+id/action_mainFragment_to_ResultsFragmet"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/resultsFragment"
+        android:name="com.example.openweather.ui.main.ResultsFragment"
+        android:label="Weather For"
+        tools:layout="@layout/fragment_results"/>
 
 </navigation>

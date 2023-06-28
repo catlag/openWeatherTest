@@ -1,29 +1,22 @@
 package com.example.openweather
 
-import android.app.AlertDialog
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.activity.result.contract.ActivityResultContracts
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.example.openweather.ui.main.MainFragment
 import com.example.openweather.ui.main.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+
 const val REQUEST_CODE = 100
+const val LAST_LAT_LON = "lastLatLon"
+const val LAT = "lat"
+const val LON = "lon"
 
 class MainActivity : AppCompatActivity() {
     private val viewModel by viewModel<MainViewModel>()
@@ -39,8 +32,19 @@ class MainActivity : AppCompatActivity() {
         navController = navHost.navController
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
-
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         checkPermission()
+        checkLastLatLon()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                navController.popBackStack()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun checkPermission(){
@@ -78,6 +82,17 @@ class MainActivity : AppCompatActivity() {
 //                }
 //            }
 //        }
+    }
+
+    private fun checkLastLatLon(){
+//        checking shared preferences for saved lat lon of last search
+        val prefs = getSharedPreferences(LAST_LAT_LON, MODE_PRIVATE)
+        val lat = prefs.getString(LAT, null)
+        val lon = prefs.getString(LON, null)
+        if (!lat.isNullOrEmpty() && !lon.isNullOrEmpty()){
+            viewModel.getWeatherByCoordinates(lat, lon)
+            navController.navigate(R.id.action_mainFragment_to_ResultsFragmet)
+        }
     }
 
 }
