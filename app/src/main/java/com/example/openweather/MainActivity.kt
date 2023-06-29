@@ -1,8 +1,16 @@
 package com.example.openweather
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
@@ -24,6 +32,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navHost: NavHostFragment
     private lateinit var navController: NavController
+    private lateinit var locationManager: LocationManager
+    private  var networkLocation: Location? = null
+    private  var gpsLocation: Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +45,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         checkPermission()
-        checkLastLatLon()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -48,51 +58,68 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkPermission(){
-        if ( ActivityCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                ),
-                REQUEST_CODE
-            );
-        }
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//            if (ActivityCompat.checkSelfPermission(
-//                    this,
-//                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-//                ) == PackageManager.PERMISSION_GRANTED
-//            ) {
-//                if (ActivityCompat.checkSelfPermission(
-//                        this,
-//                        android.Manifest.permission.ACCESS_COARSE_LOCATION
-//                    ) != PackageManager.PERMISSION_GRANTED
-//                ) {
-//                    ActivityCompat.requestPermissions(
-//                        this,
-//                        arrayOf(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-//                        REQUEST_CODE
-//                    );
-//                }
-//            }
-//        }
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+         if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+             ActivityCompat.requestPermissions(
+                 this,
+                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                 REQUEST_CODE
+             )
+             return
+         }
+        networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+        gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        setFromSavedLocation()
     }
 
-    private fun checkLastLatLon(){
-//        checking shared preferences for saved lat lon of last search
-        val prefs = getSharedPreferences(LAST_LAT_LON, MODE_PRIVATE)
-        val lat = prefs.getString(LAT, null)
-        val lon = prefs.getString(LON, null)
-        if (!lat.isNullOrEmpty() && !lon.isNullOrEmpty()){
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String?>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && !grantResults.any { it != PackageManager.PERMISSION_GRANTED }) {
+                try {
+                    gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                    networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                    setFromSavedLocation()
+                } catch (e: SecurityException){
+
+                }
+            } else {
+                setFromSavedLocation()
+            }
+            return
+        }
+    }
+
+    fun setFromSavedLocation(){
+        // checking user location &shared preferences for saved lat lon of last search
+        var lat = ""
+        var lon = ""
+        if (gpsLocation != null){
+            lat = gpsLocation!!.latitude.toString()
+            lon = gpsLocation!!.longitude.toString()
+        }else if (networkLocation != null){
+            lat = networkLocation!!.latitude.toString()
+            lon = networkLocation!!.longitude.toString()
+        } else {
+            val prefs = getSharedPreferences(LAST_LAT_LON, MODE_PRIVATE)
+            lat = prefs.getString(LAT, "").toString()
+            lon = prefs.getString(LON, "").toString()
+        }
+
+        if (lat.isNotEmpty() && lon.isNotEmpty()){
             viewModel.getWeatherByCoordinates(lat, lon)
             navController.navigate(R.id.action_mainFragment_to_ResultsFragmet)
         }
     }
-
 }
