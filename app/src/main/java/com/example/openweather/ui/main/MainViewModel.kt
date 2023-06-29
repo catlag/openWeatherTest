@@ -23,9 +23,13 @@ class MainViewModel(
 ) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-
     val placeGeoLocations = MutableLiveData<Outcome<List<PlaceGeolocation>>>()
     var completeWeather = MutableLiveData<Outcome<CompleteWeather>>()
+
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
+    }
 
     fun getWeatherByPlace(userInput: String){
         completeWeather.value = Outcome.loading(null)

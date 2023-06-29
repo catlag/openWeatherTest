@@ -2,13 +2,14 @@ package com.example.openweather.data
 
 import android.graphics.Point
 import com.example.openweather.domain.PlaceGeolocation
+import java.lang.StringBuilder
 
 data class NetworkPlaceGeolocation (
     val name: String,
     val lon: Double,
     val lat: Double,
-    val country: String,
-    val state: String? = "",
+    val country: String?,
+    val state: String?,
 ){
     fun toDomain() = PlaceGeolocation(
         name = name,
@@ -19,7 +20,11 @@ data class NetworkPlaceGeolocation (
         fullLocation = getFullLocation()
     )
     private fun getFullLocation(): String {
-        return "$name $state $country"
+        val location = StringBuilder()
+        if (name.isNotEmpty()){location.append(name)}
+        if (state?.isNotEmpty() == true){location.append(" $state")}
+        if (country?.isNotEmpty() == true){location.append(", $country")}
+        return location.toString()
     }
 }
 
