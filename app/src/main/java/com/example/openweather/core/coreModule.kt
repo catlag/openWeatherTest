@@ -1,5 +1,6 @@
 package com.example.openweather
 
+import android.os.Build
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import org.koin.android.BuildConfig
@@ -10,7 +11,8 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
 
-
+//const val BASE_URL = com.example.openweather.BuildConfig.baseUrl
+const val BASE_URL = "https://api.openweathermap.org"
 var coreModule = module {
 
     factory<Moshi> {
@@ -24,10 +26,11 @@ var coreModule = module {
         MoshiConverterFactory.create(get()).asLenient()
     }
 
+
     factory<Retrofit> {
             Retrofit
                 .Builder()
-                .baseUrl(com.example.openweather.BuildConfig.baseUrl)
+                .baseUrl(BASE_URL)
                 .addConverterFactory(get())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
