@@ -8,9 +8,7 @@ import com.example.openweather.LON
 import com.example.openweather.core.Outcome
 import com.example.openweather.domain.CompleteWeather
 import com.example.openweather.domain.PlaceGeolocation
-import com.example.openweather.ui.main.usecases.FetchLocationCoordinatesUseCase
-import com.example.openweather.ui.main.usecases.FetchWeatherByCoordinatesUseCase
-import com.example.openweather.ui.main.usecases.FetchWeatherByPlaceUseCase
+import com.example.openweather.ui.main.usecases.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -20,11 +18,14 @@ class MainViewModel(
     private val fetchWeatherByPlace: FetchWeatherByPlaceUseCase,
     private val fetchLocationCoordinates: FetchLocationCoordinatesUseCase,
     private val fetchWeatherByCoordinates: FetchWeatherByCoordinatesUseCase,
+    private val fetchLocalCoordinatesUseCase: FetchLocalCoordinatesUseCase,
+    private val patchLocalCoordinatesUseCase: PatchLocalCoordinatesUseCase,
 ) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
     val placeGeoLocations = MutableLiveData<Outcome<List<PlaceGeolocation>>>()
     var completeWeather = MutableLiveData<Outcome<CompleteWeather>>()
+    var localCoordinates = MutableLiveData<Outcome<HashMap<String, String>>>()
 
     override fun onCleared() {
         super.onCleared()
@@ -55,8 +56,8 @@ class MainViewModel(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-
                    completeWeather.value = Outcome.success(it)
+                   patchLocalCoordinates(it.coordinates.lat.toString(), it.coordinates.lon.toString())
                 }, {
                     completeWeather.value = Outcome.error(it.message.toString(), null)
                     Log.e("WEATHER", it.message.toString())
@@ -78,5 +79,19 @@ class MainViewModel(
                     Log.e("COORDINATES", it.message.toString())
                 })
         )
+    }
+
+    fun getLocalCoordinates(){
+        localCoordinates.value = Outcome.loading(hashMapOf())
+        val data = fetchLocalCoordinatesUseCase.execute()
+        if (data.isNotEmpty()){
+            localCoordinates.value = Outcome.success(data)
+        }else {
+            Outcome.error("missing coordinates", null)
+        }
+    }
+
+    fun patchLocalCoordinates(lat: String, lon: String){
+        patchLocalCoordinatesUseCase.execute(lat, lon)
     }
 }

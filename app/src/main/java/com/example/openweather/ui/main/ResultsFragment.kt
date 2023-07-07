@@ -57,11 +57,11 @@ class ResultsFragment : Fragment() {
             when(it.status){
                 Status.SUCCESS -> {
 //                    save successful search lat lon for use upon launch
-                    val editor: SharedPreferences.Editor = requireContext().getSharedPreferences(
-                        LAST_LAT_LON, Context.MODE_PRIVATE).edit()
-                    editor.putString(LAT, it.data?.coordinates?.lat.toString())
-                    editor.putString(LON, it.data?.coordinates?.lon.toString())
-                    editor.apply()
+//                    val editor: SharedPreferences.Editor = requireContext().getSharedPreferences(
+//                        LAST_LAT_LON, Context.MODE_PRIVATE).edit()
+//                    editor.putString(LAT, it.data?.coordinates?.lat.toString())
+//                    editor.putString(LON, it.data?.coordinates?.lon.toString())
+//                    editor.apply()
 
                     binding.completeWeather = it.data
 //                  send Weather class to recycler in case there is more than one in array

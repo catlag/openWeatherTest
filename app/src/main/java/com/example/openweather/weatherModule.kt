@@ -1,9 +1,8 @@
 package com.example.openweather
 
-import com.example.openweather.ui.main.usecases.FetchWeatherByPlaceUseCase
+import android.content.SharedPreferences
 import com.example.openweather.ui.main.MainViewModel
-import com.example.openweather.ui.main.usecases.FetchLocationCoordinatesUseCase
-import com.example.openweather.ui.main.usecases.FetchWeatherByCoordinatesUseCase
+import com.example.openweather.ui.main.usecases.*
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -30,11 +29,25 @@ val weatherModule = module {
         )
     }
 
+    single{
+        FetchLocalCoordinatesUseCase(
+            get()
+        )
+    }
+
+    single{
+        PatchLocalCoordinatesUseCase(
+            get()
+        )
+    }
+
     viewModel {
         MainViewModel(
             fetchWeatherByPlace = get(),
             fetchLocationCoordinates = get(),
             fetchWeatherByCoordinates = get(),
+            fetchLocalCoordinatesUseCase = get(),
+            patchLocalCoordinatesUseCase = get(),
         )
     }
 }

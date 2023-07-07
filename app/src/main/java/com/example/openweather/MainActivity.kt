@@ -9,6 +9,7 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.openweather.core.Status
 import com.example.openweather.ui.main.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -45,6 +47,8 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         checkPermission()
+        observeLocalPreferences()
+        viewModel.getLocalCoordinates()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -105,21 +109,50 @@ class MainActivity : AppCompatActivity() {
         // checking user location &shared preferences for saved lat lon of last search
         var lat = ""
         var lon = ""
+//        if (gpsLocation != null){
+//            lat = gpsLocation!!.latitude.toString()
+//            lon = gpsLocation!!.longitude.toString()
+//        }else if (networkLocation != null){
+//            lat = networkLocation!!.latitude.toString()
+//            lon = networkLocation!!.longitude.toString()
+//        } else {
+//            val prefs = getSharedPreferences(LAST_LAT_LON, MODE_PRIVATE)
+//            lat = prefs.getString(LAT, "").toString()
+//            lon = prefs.getString(LON, "").toString()
+//        }
+
         if (gpsLocation != null){
             lat = gpsLocation!!.latitude.toString()
             lon = gpsLocation!!.longitude.toString()
-        }else if (networkLocation != null){
+        }
+        if (networkLocation != null){
             lat = networkLocation!!.latitude.toString()
             lon = networkLocation!!.longitude.toString()
-        } else {
-            val prefs = getSharedPreferences(LAST_LAT_LON, MODE_PRIVATE)
-            lat = prefs.getString(LAT, "").toString()
-            lon = prefs.getString(LON, "").toString()
         }
-
         if (lat.isNotEmpty() && lon.isNotEmpty()){
             viewModel.getWeatherByCoordinates(lat, lon)
             navController.navigate(R.id.action_mainFragment_to_ResultsFragmet)
+        }
+    }
+
+    private fun observeLocalPreferences() {
+        viewModel.localCoordinates.observe(this) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    val lat = it.data?.get(LAT)
+                    val lon = it.data?.get(LON)
+                    if (lat?.isNotEmpty() == true && lon?.isNotEmpty() == true) {
+                        viewModel.getWeatherByCoordinates(lat, lon)
+                        navController.navigate(R.id.action_mainFragment_to_ResultsFragmet)
+                    }
+                }
+                Status.LOADING -> {
+//                    do nothing
+                }
+                Status.ERROR -> {
+//                do nothing
+                }
+            }
         }
     }
 }
